@@ -29,3 +29,12 @@ primary_region = "ord"  # Chicago - change to your preferred region
 [mounts]
   source = "data"
   destination = "/data"
+
+# Cron jobs for automated data syncing
+[[cron]]
+  schedule = "5 * * * *"  # Every hour at 5 minutes past the hour
+  command = "dclim -D /data/"
+
+[[cron]]
+  schedule = "15 * * * *"  # Every hour at 15 minutes past the hour
+  command = "dclisync -D /data/ --sync"

@@ -50,15 +50,15 @@ COPY --from=builder /app/server/node_modules ./server/node_modules
 COPY server/ ./server/
 COPY shared/ ./shared/
 
+# Copy shared module into server's node_modules
+RUN cp -r /app/shared /app/server/node_modules/
+
 # Copy built client files
 COPY --from=builder /app/client-web/build ./client-web/build
 
 # Copy docker entrypoint
 COPY docker/docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
-
-# Set working directory to server
-WORKDIR /app/server
 
 # Expose port
 EXPOSE 8080

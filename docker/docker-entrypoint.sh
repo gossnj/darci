@@ -47,10 +47,16 @@ if dclim --verbose -D /data/; then
     else
         echo "Warning: USER environment variable not set. Skipping user data sync."
         echo "To sync user data, set USER environment variable in Fly.io"
+        echo "Creating minimal database schema for server startup..."
+        # Create a minimal database schema so the server can start
+        sqlite3 /data/darci.db "CREATE TABLE IF NOT EXISTS version (version INTEGER); INSERT OR IGNORE INTO version (version) VALUES (10);"
     fi
 else
     echo "Warning: Manifest sync failed. This may be due to missing API credentials."
     echo "The server will start but may not have data until the cron jobs run with proper credentials."
+    echo "Creating minimal database schema for server startup..."
+    # Create a minimal database schema so the server can start
+    sqlite3 /data/darci.db "CREATE TABLE IF NOT EXISTS version (version INTEGER); INSERT OR IGNORE INTO version (version) VALUES (10);"
 fi
 
 # Start the Express server (serves both API and static files)

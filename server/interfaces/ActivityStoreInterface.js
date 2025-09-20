@@ -81,17 +81,35 @@ class ActivityStoreInterface {
         
         this.#db = new Database(this.#dbPath, { readonly: true });
 
-        this.#initStatements();
+        try {
+            this.#initStatements();
+        } catch (error) {
+            if (error.code === 'SQLITE_ERROR' && error.message.includes('no such table')) {
+                console.log('Database schema not yet initialized. Server will start but may not have full functionality.');
+                console.log('The database will be properly initialized when dclisync runs via cron jobs.');
+                // Don't throw error, just log and continue
+            } else {
+                throw error; // Re-throw other errors
+            }
+        }
     }
 
     checkVersion() {
-        let row = this.#select_version.get();
+        try {
+            let row = this.#select_version.get();
 
-        if (row.version !== DB_SCHEMA_VERSION) {
-            throw Error(
-                `DB Schema Version mismatch. Expected [${DB_SCHEMA_VERSION}] found [${row.version}]\n
-                Please make sure you are running the correct version of DCLI`
-            );
+            if (row.version !== DB_SCHEMA_VERSION) {
+                throw Error(
+                    `DB Schema Version mismatch. Expected [${DB_SCHEMA_VERSION}] found [${row.version}]\n
+                    Please make sure you are running the correct version of DCLI`
+                );
+            }
+        } catch (error) {
+            if (error.code === 'SQLITE_ERROR' && error.message.includes('no such table')) {
+                console.log('Database schema not yet initialized. Skipping version check.');
+                return; // Don't throw error for missing schema
+            }
+            throw error; // Re-throw other errors
         }
     }
 

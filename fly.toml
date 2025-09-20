@@ -27,5 +27,5 @@ primary_region = "ord"  # Chicago - change to your preferred region
   memory_mb = 256
 
 [mounts]
-  source = "darci_data"
+  source = "data"
   destination = "/data"

@@ -49,7 +49,7 @@ if dclim --verbose -D /data/; then
         echo "To sync user data, set USER environment variable in Fly.io"
         echo "Creating minimal database schema for server startup..."
         # Create a minimal database schema so the server can start
-        node -e "
+        cd /app/server && node -e "
         const Database = require('better-sqlite3');
         const db = new Database('/data/darci.db');
         db.exec('CREATE TABLE IF NOT EXISTS version (version INTEGER); INSERT OR IGNORE INTO version (version) VALUES (10);');
@@ -62,7 +62,7 @@ else
     echo "The server will start but may not have data until the cron jobs run with proper credentials."
     echo "Creating minimal database schema for server startup..."
     # Create a minimal database schema so the server can start
-    node -e "
+    cd /app/server && node -e "
     const Database = require('better-sqlite3');
     const db = new Database('/data/darci.db');
     db.exec('CREATE TABLE IF NOT EXISTS version (version INTEGER); INSERT OR IGNORE INTO version (version) VALUES (10);');

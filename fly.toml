@@ -18,6 +18,9 @@ primary_region = "ord"  # Chicago - change to your preferred region
   min_machines_running = 0
   processes = ["app"]
 
+[processes]
+  app = "/app/docker-entrypoint.sh"
+
 [[vm]]
   cpu_kind = "shared"
   cpus = 1

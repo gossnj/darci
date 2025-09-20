@@ -63,6 +63,22 @@ class ActivityStoreInterface {
         }
 
         console.log(`Using data store at: ${this.#dbPath}`);
+        
+        // Check if database file exists
+        const fs = require('fs');
+        if (!fs.existsSync(this.#dbPath)) {
+            console.log(`Database file does not exist at ${this.#dbPath}. Creating empty database.`);
+            // Create the directory if it doesn't exist
+            const path = require('path');
+            const dir = path.dirname(this.#dbPath);
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
+            }
+            // Create an empty database file first
+            this.#db = new Database(this.#dbPath);
+            this.#db.close();
+        }
+        
         this.#db = new Database(this.#dbPath, { readonly: true });
 
         this.#initStatements();

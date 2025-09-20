@@ -34,10 +34,10 @@ if [ -z "$BUNGIE_API_KEY" ]; then
     echo "Please set your Bungie API credentials in Fly.io dashboard or via fly CLI"
 fi
 
-# Sync destiny manifest (only if we have API key)
-if [ -n "$BUNGIE_API_KEY" ]; then
-    echo "Syncing Destiny 2 manifest..."
-    dclim --verbose -D /data/
+# Always try to sync destiny manifest (even without API key for basic schema)
+echo "Attempting to sync Destiny 2 manifest..."
+if dclim --verbose -D /data/; then
+    echo "Manifest sync completed successfully"
     
     # Sync user data (only if USER environment variable is set)
     if [ -n "$USER" ]; then
@@ -49,7 +49,8 @@ if [ -n "$BUNGIE_API_KEY" ]; then
         echo "To sync user data, set USER environment variable in Fly.io"
     fi
 else
-    echo "Skipping manifest and user sync due to missing API credentials"
+    echo "Warning: Manifest sync failed. This may be due to missing API credentials."
+    echo "The server will start but may not have data until the cron jobs run with proper credentials."
 fi
 
 # Start the Express server (serves both API and static files)

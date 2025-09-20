@@ -96,6 +96,13 @@ class ActivityStoreInterface {
 
     checkVersion() {
         try {
+            // Check if prepared statements are initialized
+            if (!this.#select_version) {
+                console.log('Database prepared statements not yet initialized. Skipping version check.');
+                console.log('This is normal on first startup. The database will be populated by the cron jobs.');
+                return;
+            }
+
             let row = this.#select_version.get();
 
             if (row.version !== DB_SCHEMA_VERSION) {

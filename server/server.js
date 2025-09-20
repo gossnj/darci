@@ -362,16 +362,29 @@ app.use(function (err, req, res, next) {
 });
 
 const init = async () => {
-    console.log("Initializing Manifest");
-    await manifestInterface.init();
-
-    //will throw if there is a version mismatch between what is expected
-    //and what is in db
-    activityStore.checkVersion();
-
+    // Start the server immediately
     app.listen(port, () => {
         console.log(`Server running at http://${hostname}:${port}/`);
     });
+
+    // Initialize manifest in the background
+    console.log("Initializing Manifest in background...");
+    try {
+        await manifestInterface.init();
+        console.log("Manifest initialization completed");
+    } catch (error) {
+        console.log("Manifest initialization failed:", error.message);
+        console.log("Server will continue running with limited functionality");
+    }
+
+    // Check database version (this is lightweight)
+    try {
+        activityStore.checkVersion();
+        console.log("Database version check completed");
+    } catch (error) {
+        console.log("Database version check failed:", error.message);
+        console.log("Server will continue running with limited functionality");
+    }
 };
 
 init();

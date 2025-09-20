@@ -20,7 +20,7 @@ echo "Data directory created successfully: $(ls -la /data)"
 
 # Set database paths for dcli tools
 export DCLI_DB_PATH=${DCLI_DB_PATH:-/data/darci.db}
-export MANIFEST_DB_PATH=${MANIFEST_DB_PATH:-/data/manifest.db}
+export MANIFEST_DB_PATH=${MANIFEST_DB_PATH:-/data/manifest.sqlite3}
 export MANIFEST_INFO_PATH=${MANIFEST_INFO_PATH:-/data/manifest_info.json}
 
 echo "Database paths set:"
@@ -49,14 +49,26 @@ if dclim --verbose -D /data/; then
         echo "To sync user data, set USER environment variable in Fly.io"
         echo "Creating minimal database schema for server startup..."
         # Create a minimal database schema so the server can start
-        sqlite3 /data/darci.db "CREATE TABLE IF NOT EXISTS version (version INTEGER); INSERT OR IGNORE INTO version (version) VALUES (10);"
+        node -e "
+        const Database = require('better-sqlite3');
+        const db = new Database('/data/darci.db');
+        db.exec('CREATE TABLE IF NOT EXISTS version (version INTEGER); INSERT OR IGNORE INTO version (version) VALUES (10);');
+        db.close();
+        console.log('Minimal database schema created.');
+        "
     fi
 else
     echo "Warning: Manifest sync failed. This may be due to missing API credentials."
     echo "The server will start but may not have data until the cron jobs run with proper credentials."
     echo "Creating minimal database schema for server startup..."
     # Create a minimal database schema so the server can start
-    sqlite3 /data/darci.db "CREATE TABLE IF NOT EXISTS version (version INTEGER); INSERT OR IGNORE INTO version (version) VALUES (10);"
+    node -e "
+    const Database = require('better-sqlite3');
+    const db = new Database('/data/darci.db');
+    db.exec('CREATE TABLE IF NOT EXISTS version (version INTEGER); INSERT OR IGNORE INTO version (version) VALUES (10);');
+    db.close();
+    console.log('Minimal database schema created.');
+    "
 fi
 
 # Start the Express server (serves both API and static files)

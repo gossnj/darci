@@ -1,16 +1,38 @@
 #!/bin/sh
 
-# sync destiny manifest
-dclim --verbose -D /db/
+# Create data directory if it doesn't exist
+mkdir -p /data
 
-# sync user
-dclisync -D /db/ --add $USER
-dclisync -D /db/ --sync
+# Set database paths for dcli tools
+export DCLI_DB_PATH=${DCLI_DB_PATH:-/data/darci.db}
+export MANIFEST_DB_PATH=${MANIFEST_DB_PATH:-/data/manifest.db}
+export MANIFEST_INFO_PATH=${MANIFEST_INFO_PATH:-/data/manifest_info.json}
 
-# start server in background
-cd /server
-npm start &
+# Check if we have Bungie API credentials
+if [ -z "$BUNGIE_API_KEY" ]; then
+    echo "Warning: BUNGIE_API_KEY not set. dcli tools may not work properly."
+    echo "Please set your Bungie API credentials in Fly.io dashboard or via fly CLI"
+fi
 
-# start webserver in foreground
-cd /client-web
-npm start
+# Sync destiny manifest (only if we have API key)
+if [ -n "$BUNGIE_API_KEY" ]; then
+    echo "Syncing Destiny 2 manifest..."
+    dclim --verbose -D /data/
+    
+    # Sync user data (only if USER environment variable is set)
+    if [ -n "$USER" ]; then
+        echo "Syncing user data for: $USER"
+        dclisync -D /data/ --add $USER
+        dclisync -D /data/ --sync
+    else
+        echo "Warning: USER environment variable not set. Skipping user data sync."
+        echo "To sync user data, set USER environment variable in Fly.io"
+    fi
+else
+    echo "Skipping manifest and user sync due to missing API credentials"
+fi
+
+# Start the Express server (serves both API and static files)
+echo "Starting DARCI server..."
+cd /app/server
+exec npm start

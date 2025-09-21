@@ -3,4 +3,4 @@
 5 */12 * * * dclim -D /data/
 
 # Data sync every 30 minutes
-*/30 * * * * dclisync -D /data/ --sync
+*/30 * * * * dclisync -D /data/ --sync --api-key $BUNGIE_API_KEY

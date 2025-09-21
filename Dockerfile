@@ -33,7 +33,18 @@ RUN ls -la && cat package.json && npm install && npm run build
 FROM node:16-alpine AS production
 
 # Install runtime dependencies
-RUN apk add --no-cache unzip
+RUN apk add --no-cache unzip curl
+
+# Install Supercronic
+ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-amd64 \
+    SUPERCRONIC=supercronic-linux-amd64 \
+    SUPERCRONIC_SHA1SUM=cd48d45c4b10f3f0bfdd3a57d054cd05ac96812b
+
+RUN curl -fsSLO "$SUPERCRONIC_URL" \
+ && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
+ && chmod +x "${SUPERCRONIC}" \
+ && mv "${SUPERCRONIC}" "/usr/local/bin/${SUPERCRONIC}" \
+ && ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic
 
 # Copy dcli tools from downloader stage
 COPY --from=dcli-downloader /usr/local/bin/dcli* /usr/local/bin/
@@ -53,8 +64,9 @@ RUN rm -f /app/server/node_modules/shared && cp -r /app/shared /app/server/node_
 # Copy built client files
 COPY --from=builder /app/client-web/build ./client-web/build
 
-# Copy docker entrypoint
+# Copy docker entrypoint and crontab
 COPY docker/docker-entrypoint.sh ./docker-entrypoint.sh
+COPY crontab /app/crontab
 RUN chmod +x ./docker-entrypoint.sh
 
 # Expose port

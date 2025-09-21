@@ -1,0 +1,6 @@
+# DARCI cron jobs
+# Data sync every 12 hours at 5 minutes past the hour
+5 */12 * * * dclim -D /data/
+
+# Data sync every 30 minutes
+*/30 * * * * dclisync -D /data/ --sync

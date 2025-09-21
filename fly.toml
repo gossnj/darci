@@ -20,6 +20,7 @@ primary_region = "ord"  # Chicago - change to your preferred region
 
 [processes]
   app = "/app/docker-entrypoint.sh"
+  cron = "supercronic /app/crontab"
 
 [[vm]]
   cpu_kind = "shared"
@@ -30,11 +31,4 @@ primary_region = "ord"  # Chicago - change to your preferred region
   source = "data"
   destination = "/data"
 
-# Cron jobs for automated data syncing
-[[cron]]
-  schedule = "5 */12 * * *"  # Every 12 hours at 5 minutes past the hour
-  command = "dclim -D /data/"
-
-[[cron]]
-  schedule = "*/30 * * * *"  # Every 30 minutes
-  command = "dclisync -D /data/ --sync"
+# Cron jobs are now handled by Supercronic process

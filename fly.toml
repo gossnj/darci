@@ -26,6 +26,14 @@ primary_region = "ord"  # Chicago - change to your preferred region
   cpu_kind = "shared"
   cpus = 1
   memory_mb = 256
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
+  processes = ["cron"]
+  entrypoint = ["supercronic", "/app/crontab"]
 
 [mounts]
   source = "data"

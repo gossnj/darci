@@ -32,9 +32,9 @@ primary_region = "ord"  # Chicago - change to your preferred region
 
 # Cron jobs for automated data syncing
 [[cron]]
-  schedule = "5 * * * *"  # Every hour at 5 minutes past the hour
+  schedule = "5 */12 * * *"  # Every 12 hours at 5 minutes past the hour
   command = "dclim -D /data/"
 
 [[cron]]
-  schedule = "*/15 * * * *"  # Every 15 minutes
+  schedule = "*/30 * * * *"  # Every 30 minutes
   command = "dclisync -D /data/ --sync"

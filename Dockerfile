@@ -1,7 +1,7 @@
 # Multi-stage build for DARCI on Fly.io
 FROM node:16-alpine AS dcli-downloader
 
-ARG DCLI_VERSION=0.9.0
+ARG DCLI_VERSION=0.99.9
 ARG PLATFORM=x86_64-unknown-linux-musl
 
 # Download and extract dcli tools

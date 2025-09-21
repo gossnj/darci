@@ -39,24 +39,18 @@ echo "Attempting to sync Destiny 2 manifest..."
 if dclim --verbose -D /data/; then
     echo "Manifest sync completed successfully"
     
-    # Sync user data (only if USER environment variable is set)
-    if [ -n "$USER" ]; then
-        echo "Syncing user data for: $USER"
-        dclisync -D /data/ --add $USER
-        dclisync -D /data/ --sync
-    else
-        echo "Warning: USER environment variable not set. Skipping user data sync."
-        echo "To sync user data, set USER environment variable in Fly.io"
-        echo "Creating minimal database schema for server startup..."
-        # Create a minimal database schema so the server can start
-        cd /app/server && node -e "
-        const Database = require('better-sqlite3');
-        const db = new Database('/data/darci.db');
-        db.exec('CREATE TABLE IF NOT EXISTS version (version INTEGER); INSERT OR IGNORE INTO version (version) VALUES (10);');
-        db.close();
-        console.log('Minimal database schema created.');
-        "
-    fi
+    # Skip user data sync during startup - let cron jobs handle it
+    echo "Warning: USER environment variable not set. Skipping user data sync."
+    echo "To sync user data, set USER environment variable in Fly.io"
+    echo "Creating minimal database schema for server startup..."
+    # Create a minimal database schema so the server can start
+    cd /app/server && node -e "
+    const Database = require('better-sqlite3');
+    const db = new Database('/data/darci.db');
+    db.exec('CREATE TABLE IF NOT EXISTS version (version INTEGER); INSERT OR IGNORE INTO version (version) VALUES (10);');
+    db.close();
+    console.log('Minimal database schema created.');
+    "
 else
     echo "Warning: Manifest sync failed. This may be due to missing API credentials."
     echo "The server will start but may not have data until the cron jobs run with proper credentials."

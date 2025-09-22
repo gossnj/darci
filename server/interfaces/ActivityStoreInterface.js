@@ -63,60 +63,19 @@ class ActivityStoreInterface {
         }
 
         console.log(`Using data store at: ${this.#dbPath}`);
-        
-        // Check if database file exists
-        const fs = require('fs');
-        if (!fs.existsSync(this.#dbPath)) {
-            console.log(`Database file does not exist at ${this.#dbPath}. Creating empty database.`);
-            // Create the directory if it doesn't exist
-            const path = require('path');
-            const dir = path.dirname(this.#dbPath);
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, { recursive: true });
-            }
-            // Create an empty database file first
-            this.#db = new Database(this.#dbPath);
-            this.#db.close();
-        }
-        
         this.#db = new Database(this.#dbPath, { readonly: true });
 
-        try {
-            this.#initStatements();
-        } catch (error) {
-            if (error.code === 'SQLITE_ERROR' && error.message.includes('no such table')) {
-                console.log('Database schema not yet initialized. Server will start but may not have full functionality.');
-                console.log('The database will be properly initialized when dclisync runs via cron jobs.');
-                // Don't throw error, just log and continue
-            } else {
-                throw error; // Re-throw other errors
-            }
-        }
+        this.#initStatements();
     }
 
     checkVersion() {
-        try {
-            // Check if prepared statements are initialized
-            if (!this.#select_version) {
-                console.log('Database prepared statements not yet initialized. Skipping version check.');
-                console.log('This is normal on first startup. The database will be populated by the cron jobs.');
-                return;
-            }
+        let row = this.#select_version.get();
 
-            let row = this.#select_version.get();
-
-            if (row.version !== DB_SCHEMA_VERSION) {
-                throw Error(
-                    `DB Schema Version mismatch. Expected [${DB_SCHEMA_VERSION}] found [${row.version}]\n
-                    Please make sure you are running the correct version of DCLI`
-                );
-            }
-        } catch (error) {
-            if (error.code === 'SQLITE_ERROR' && error.message.includes('no such table')) {
-                console.log('Database schema not yet initialized. Skipping version check.');
-                return; // Don't throw error for missing schema
-            }
-            throw error; // Re-throw other errors
+        if (row.version !== DB_SCHEMA_VERSION) {
+            throw Error(
+                `DB Schema Version mismatch. Expected [${DB_SCHEMA_VERSION}] found [${row.version}]\n
+                Please make sure you are running the correct version of DCLI`
+            );
         }
     }
 

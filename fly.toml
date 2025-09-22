@@ -6,7 +6,7 @@ primary_region = "ord"  # Chicago - change to your preferred region
 
 [env]
   NODE_ENV = "production"
-  DCLI_DB_PATH = "/data/darci.db"
+  DCLI_DB_PATH = "/data/dcli.sqlite3"
   MANIFEST_DB_PATH = "/data/manifest.sqlite3"
   MANIFEST_INFO_PATH = "/data/manifest_info.json"
 

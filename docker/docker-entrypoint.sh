@@ -1,23 +1,5 @@
 #!/bin/sh
 
-# Create data directory if it doesn't exist and set proper permissions
-echo "Creating /data directory..."
-mkdir -p /data
-chmod 755 /data
-
-# Verify directory was created and is writable
-if [ ! -d "/data" ]; then
-    echo "ERROR: Failed to create /data directory"
-    exit 1
-fi
-
-if [ ! -w "/data" ]; then
-    echo "ERROR: /data directory is not writable"
-    exit 1
-fi
-
-echo "Data directory created successfully: $(ls -la /data)"
-
 # Set database paths for dcli tools
 export DCLI_DB_PATH=${DCLI_DB_PATH:-/data/dcli.sqlite3}
 export MANIFEST_DB_PATH=${MANIFEST_DB_PATH:-/data/manifest.sqlite3}

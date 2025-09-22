@@ -41,10 +41,6 @@ else
     echo "Warning: Schema initialization failed. This may be due to missing API credentials or network issues."
 fi
 
-# Start supercronic in the background for cron jobs
-echo "Starting supercronic for cron jobs..."
-supercronic /app/crontab &
-
 # Start the Express server (serves both API and static files)
 echo "Starting DARCI server..."
 echo "Current directory: $(pwd)"
@@ -52,4 +48,17 @@ echo "Contents of /data:"
 ls -la /data/
 
 cd /app/server
+echo "Starting server in directory: $(pwd)"
+echo "Server will listen on 0.0.0.0:8080"
+echo "Environment variables:"
+echo "  NODE_ENV: $NODE_ENV"
+echo "  DCLI_DB_PATH: $DCLI_DB_PATH"
+echo "  MANIFEST_DB_PATH: $MANIFEST_DB_PATH"
+echo "  MANIFEST_INFO_PATH: $MANIFEST_INFO_PATH"
+
+# Start supercronic in the background for cron jobs
+echo "Starting supercronic for cron jobs..."
+supercronic /app/crontab &
+
+# Start the Express server in the foreground
 exec node server.js

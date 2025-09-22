@@ -302,6 +302,15 @@ app.get("/api/players/", (req, res, next) => {
     sendJsonResponse(res, out);
 });
 
+// Health check endpoint for load balancer
+app.get("/health", (req, res) => {
+    res.status(200).json({ 
+        status: "healthy", 
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
+});
+
 const manifestNoUpdateData = { updated: false };
 app.get("/manifest/:version/", (req, res, next) => {
     //let version = req.params.version ? atob(req.params.version) : undefined;
@@ -427,9 +436,10 @@ const init = async () => {
     //and what is in db
     activityStore.checkVersion();
 
-    app.listen(port, () => {
-        console.log(`Server running at http://${hostname}:${port}/`);
-    });
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server running at http://0.0.0.0:${port}/`);
+    console.log(`Hostname: ${hostname}`);
+});
 };
 
 init();

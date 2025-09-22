@@ -3,7 +3,7 @@
 5 */12 * * * echo "$(date): Starting manifest sync" >> /data/cron.log && dclim -D /data/ >> /data/cron.log 2>&1 && echo "$(date): Manifest sync completed" >> /data/cron.log
 
 # User sync from Google Sheets every hour at 10 minutes past the hour
-10 * * * * echo "$(date): Starting user sync from Google Sheets" >> /data/cron.log && cd /app/server && node scripts/user-sync.js >> /data/cron.log 2>&1 && echo "$(date): User sync completed" >> /data/cron.log
+*/15 * * * * echo "$(date): Starting user sync from Google Sheets" >> /data/cron.log && cd /app/server && node scripts/user-sync.js >> /data/cron.log 2>&1 && echo "$(date): User sync completed" >> /data/cron.log
 
 # Data sync every 30 minutes
 */30 * * * * echo "$(date): Starting data sync" >> /data/cron.log && dclisync --data-dir /data/ --api-key $BUNGIE_API_KEY --sync >> /data/cron.log 2>&1 && echo "$(date): Data sync completed" >> /data/cron.log

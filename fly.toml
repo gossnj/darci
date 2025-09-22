@@ -1,6 +1,6 @@
 # Fly.io configuration for DARCI
 app = "darci"
-primary_region = "ord"  # Chicago - change to your preferred region
+primary_region = "bos"  # Boston - matches existing volume
 
 [build]
 

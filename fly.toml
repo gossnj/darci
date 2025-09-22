@@ -17,13 +17,13 @@ primary_region = "ord"  # Chicago - change to your preferred region
   auto_start_machines = true
   min_machines_running = 1
   processes = ["web"]
-  [http_service.checks]
-    [http_service.checks.health]
-      grace_period = "10s"
-      interval = "30s"
-      method = "GET"
-      timeout = "5s"
-      path = "/health"
+
+[[http_service.checks]]
+  grace_period = "10s"
+  interval = "30s"
+  method = "GET"
+  timeout = "5s"
+  path = "/health"
 
 [processes]
   web = "/app/docker-entrypoint.sh"

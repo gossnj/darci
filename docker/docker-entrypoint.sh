@@ -28,14 +28,8 @@ fi
 # Start the Express server (serves both API and static files)
 echo "Starting DARCI server..."
 echo "Current directory: $(pwd)"
-echo "Contents of /app/server:"
-ls -la /app/server/
-echo "Contents of /app/server/node_modules:"
-ls -la /app/server/node_modules/ | head -10
-echo "Checking if shared module exists:"
-ls -la /app/server/node_modules/shared/ || echo "Shared module not found in node_modules"
-echo "Checking if server.js exists:"
-ls -la /app/server/server.js || echo "server.js not found"
+echo "Contents of /data:"
+ls -la /data/
 
 cd /app/server
 exec node server.js

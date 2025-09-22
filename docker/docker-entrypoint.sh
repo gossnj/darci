@@ -17,6 +17,14 @@ if [ -z "$BUNGIE_API_KEY" ]; then
     echo "Please set your Bungie API credentials in Fly.io dashboard or via fly CLI"
 fi
 
+# Check Google Sheets configuration
+if [ -z "$GOOGLE_SHEET_ID" ]; then
+    echo "Info: Google Sheets integration not configured. User sync from Google Sheets will be disabled."
+    echo "To enable, set GOOGLE_SHEET_ID and other Google Sheets environment variables."
+else
+    echo "Google Sheets integration configured. User sync will run every 6 hours."
+fi
+
 # Always try to sync destiny manifest (even without API key for basic schema)
 echo "Attempting to sync Destiny 2 manifest..."
 if dclim --verbose -D /data/; then

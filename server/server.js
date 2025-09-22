@@ -321,6 +321,64 @@ app.get("/manifest/:version/", (req, res, next) => {
     sendJsonResponse(res, out);
 });
 
+// Health check endpoint to monitor cron job status
+app.get("/api/health", (req, res) => {
+    try {
+        const fs = require('fs');
+        
+        // Check if cron log exists and get last few lines
+        const cronLogPath = '/data/cron.log';
+        let cronStatus = 'No cron log found';
+        let lastCronActivity = null;
+        
+        if (fs.existsSync(cronLogPath)) {
+            const logContent = fs.readFileSync(cronLogPath, 'utf8');
+            const logLines = logContent.trim().split('\n');
+            cronStatus = `Cron log exists with ${logLines.length} entries`;
+            
+            // Get last few log entries
+            const lastEntries = logLines.slice(-5);
+            lastCronActivity = lastEntries;
+        }
+        
+        // Check database file timestamps
+        const dbPath = '/data/dcli.sqlite3';
+        const manifestDbPath = '/data/manifest.sqlite3';
+        
+        let dbStatus = 'Databases not found';
+        if (fs.existsSync(dbPath) && fs.existsSync(manifestDbPath)) {
+            const dbStats = fs.statSync(dbPath);
+            const manifestStats = fs.statSync(manifestDbPath);
+            
+            dbStatus = {
+                dcli_db_last_modified: dbStats.mtime.toISOString(),
+                manifest_db_last_modified: manifestStats.mtime.toISOString(),
+                dcli_db_size: dbStats.size,
+                manifest_db_size: manifestStats.size
+            };
+        }
+        
+        res.json({
+            status: SERVER_RESPONSE_SUCCESS,
+            data: {
+                timestamp: new Date().toISOString(),
+                uptime: process.uptime(),
+                memory_usage: process.memoryUsage(),
+                cron_status: cronStatus,
+                last_cron_activity: lastCronActivity,
+                database_status: dbStatus
+            }
+        });
+    } catch (error) {
+        console.error("Error in health check:", error);
+        res.status(500).json({
+            status: SERVER_RESPONSE_ERROR,
+            message: "Health check failed",
+            error: error.message
+        });
+    }
+});
+
 app.use(express.static(path.join(__dirname, "../client-web/build/")));
 
 app.get("*", (req, res) => {

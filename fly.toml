@@ -15,25 +15,17 @@ primary_region = "ord"  # Chicago - change to your preferred region
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
   processes = ["app"]
 
 [processes]
   app = "/app/docker-entrypoint.sh"
-  cron = "/app/docker-cron-entrypoint.sh"
 
 [[vm]]
   cpu_kind = "shared"
   cpus = 1
   memory_mb = 256
   processes = ["app"]
-
-[[vm]]
-  cpu_kind = "shared"
-  cpus = 1
-  memory_mb = 256
-  processes = ["cron"]
-  entrypoint = ["supercronic", "/app/crontab"]
 
 [mounts]
   source = "data"

@@ -40,4 +40,12 @@ echo "Contents of /data:"
 ls -la /data/
 
 cd /app/server
+echo "Starting server in directory: $(pwd)"
+echo "Server will listen on 0.0.0.0:8080"
+echo "Environment variables:"
+echo "  NODE_ENV: $NODE_ENV"
+echo "  DCLI_DB_PATH: $DCLI_DB_PATH"
+echo "  MANIFEST_DB_PATH: $MANIFEST_DB_PATH"
+echo "  MANIFEST_INFO_PATH: $MANIFEST_INFO_PATH"
+
 exec node server.js

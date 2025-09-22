@@ -19,6 +19,7 @@
   "homepage": "https://github.com/mikechambers/darci#readme",
   "dependencies": {
     "better-sqlite3": "^11.5.0",
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "googleapis": "^160.0.0"
   }
 }

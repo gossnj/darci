@@ -50,9 +50,8 @@ RUN curl -fsSLO "$SUPERCRONIC_URL" \
 # Copy dcli tools from downloader stage
 COPY --from=dcli-downloader /usr/local/bin/dcli* /usr/local/bin/
 
-# Create app directory and data directory
+# Create app directory
 WORKDIR /app
-RUN mkdir -p /data
 
 # Copy server files and dependencies
 COPY --from=builder /app/server/node_modules ./server/node_modules

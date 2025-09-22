@@ -48,4 +48,9 @@ echo "  DCLI_DB_PATH: $DCLI_DB_PATH"
 echo "  MANIFEST_DB_PATH: $MANIFEST_DB_PATH"
 echo "  MANIFEST_INFO_PATH: $MANIFEST_INFO_PATH"
 
+# Start supercronic in the background for cron jobs
+echo "Starting supercronic for cron jobs..."
+supercronic /app/crontab &
+
+# Start the Express server in the foreground
 exec node server.js

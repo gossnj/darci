@@ -27,13 +27,12 @@ primary_region = "ord"  # Chicago - change to your preferred region
 
 [processes]
   web = "/app/docker-entrypoint.sh"
-  cron = "/app/docker-cron-entrypoint.sh"
 
 [[vm]]
   cpu_kind = "shared"
   cpus = 1
   memory_mb = 512
-  processes = ["web", "cron"]
+  processes = ["web"]
 
 [mounts]
   source = "data"

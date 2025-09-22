@@ -34,6 +34,7 @@ FROM node:16-alpine AS production
 
 # Install runtime dependencies
 RUN apk add --no-cache unzip curl
+RUN apk add --no-cache sqlite
 
 # Install Supercronic
 ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-amd64 \

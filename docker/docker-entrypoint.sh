@@ -23,7 +23,6 @@ if dclim --verbose -D /data/; then
     echo "Manifest sync completed successfully"
 else
     echo "Warning: Manifest sync failed. This may be due to missing API credentials."
-    
 fi
 
 # Start the Express server (serves both API and static files)

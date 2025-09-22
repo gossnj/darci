@@ -35,9 +35,7 @@ fi
 
 # Start supercronic in the background for cron jobs
 echo "Starting supercronic for cron jobs..."
-if ! supercronic /app/crontab &; then
-    echo "Warning: Failed to start supercronic. Cron jobs may not run."
-fi
+supercronic /app/crontab &
 
 # Start the Express server (serves both API and static files)
 echo "Starting DARCI server..."

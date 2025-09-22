@@ -33,10 +33,6 @@ else
     echo "Warning: Schema initialization failed. This may be due to missing API credentials or network issues."
 fi
 
-# Start supercronic in the background for cron jobs
-echo "Starting supercronic for cron jobs..."
-supercronic /app/crontab &
-
 # Start the Express server (serves both API and static files)
 echo "Starting DARCI server..."
 echo "Current directory: $(pwd)"

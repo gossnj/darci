@@ -67,8 +67,9 @@ COPY --from=builder /app/client-web/build ./client-web/build
 
 # Copy docker entrypoint and crontab
 COPY docker/docker-entrypoint.sh ./docker-entrypoint.sh
+COPY docker/cron-entrypoint.sh ./docker-cron-entrypoint.sh
 COPY crontab /app/crontab
-RUN chmod +x ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh ./docker-cron-entrypoint.sh
 
 # Expose port
 EXPOSE 8080

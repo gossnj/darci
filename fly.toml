@@ -20,7 +20,7 @@ primary_region = "ord"  # Chicago - change to your preferred region
 
 [processes]
   app = "/app/docker-entrypoint.sh"
-  cron = "supercronic /app/crontab"
+  cron = "/app/docker-cron-entrypoint.sh"
 
 [[vm]]
   cpu_kind = "shared"

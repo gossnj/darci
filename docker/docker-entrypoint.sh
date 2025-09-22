@@ -19,9 +19,10 @@ fi
 echo "Data directory created successfully: $(ls -la /data)"
 
 # Set database paths for dcli tools
-export DCLI_DB_PATH=${DCLI_DB_PATH:-/data/darci.db}
+export DCLI_DB_PATH=${DCLI_DB_PATH:-/data/dcli.sqlite3}
 export MANIFEST_DB_PATH=${MANIFEST_DB_PATH:-/data/manifest.sqlite3}
 export MANIFEST_INFO_PATH=${MANIFEST_INFO_PATH:-/data/manifest_info.json}
+export DCLI_FIX_DATA=true
 
 echo "Database paths set:"
 echo "  DCLI_DB_PATH: $DCLI_DB_PATH"

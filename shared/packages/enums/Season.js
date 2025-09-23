@@ -169,6 +169,34 @@ class Season extends EnumBase {
         Moment.EPISODE_ECHOES.type,
         Moment.EPISODE_ECHOES.label,
         Moment.EPISODE_ECHOES,
+        Moment.EPISODE_REVENANT
+    );
+
+    static EPISODE_REVENANT = new Season(
+        Moment.EPISODE_REVENANT.type,
+        Moment.EPISODE_REVENANT.label,
+        Moment.EPISODE_REVENANT,
+        Moment.EPISODE_HERESY
+    );
+
+    static EPISODE_HERESY = new Season(
+        Moment.EPISODE_HERESY.type,
+        Moment.EPISODE_HERESY.label,
+        Moment.EPISODE_HERESY,
+        Moment.THE_EDGE_OF_FATE
+    );
+
+    static THE_EDGE_OF_FATE = new Season(
+        Moment.THE_EDGE_OF_FATE.type,
+        Moment.THE_EDGE_OF_FATE.label,
+        Moment.THE_EDGE_OF_FATE,
+        Moment.ASH_AND_IRON
+    );
+
+    static ASH_AND_IRON = new Season(
+        Moment.ASH_AND_IRON.type,
+        Moment.ASH_AND_IRON.label,
+        Moment.ASH_AND_IRON,
         Moment.NOW
     );
 

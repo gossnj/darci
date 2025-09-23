@@ -148,6 +148,26 @@ class Moment extends EnumBase {
         "Episode : Echoes"
     );
 
+    static EPISODE_REVENANT = new Moment(
+        "EpisodeRevenant",
+        "Episode : Revenant"
+    );
+
+    static EPISODE_HERESY = new Moment(
+        "EpisodeHeresy",
+        "Episode : Heresy"
+    );
+
+    static THE_EDGE_OF_FATE = new Moment(
+        "TheEdgeOfFate",
+        "The Edge of Fate"
+    );
+
+    static ASH_AND_IRON = new Moment(
+        "AshAndIron",
+        "Ash & Iron"
+    );
+
     constructor(type, label = undefined) {
         super(type, undefined, label);
     }
@@ -283,6 +303,22 @@ class Moment extends EnumBase {
 
         if (this == Moment.EPISODE_ECHOES) {
             return new Date(Date.UTC(2024, 5, 4, 17, 0, 0));
+        }
+
+        if (this == Moment.EPISODE_REVENANT) {
+            return new Date(Date.UTC(2024, 9, 8, 17, 0, 0));
+        }
+
+        if (this == Moment.EPISODE_HERESY) {
+            return new Date(Date.UTC(2025, 1, 4, 17, 0, 0));
+        }
+
+        if (this == Moment.THE_EDGE_OF_FATE) {
+            return new Date(Date.UTC(2025, 6, 15, 17, 0, 0));
+        }
+
+        if (this == Moment.ASH_AND_IRON) {
+            return new Date(Date.UTC(2025, 8, 9, 17, 0, 0));
         }
 
         return undefined;

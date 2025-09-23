@@ -27,8 +27,10 @@ import { ResponsiveScatterPlot } from "@nivo/scatterplot";
 import ActivityPlayerEffectivenessTooltip from "../../../components/ActivityPlayerEffectivenessTooltip";
 
 const rootStyle = {
-    width: 600,
-    height: 400,
+    width: "100%",
+    maxWidth: "600px",
+    height: "400px",
+    minHeight: "300px",
 };
 
 const chartStyle = {

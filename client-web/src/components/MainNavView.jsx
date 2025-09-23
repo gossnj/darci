@@ -41,6 +41,7 @@ const rootStyle = {
 const navStyle = {
     display: "flex",
     gap: "24px", //move this to css and reuse
+    flexWrap: "wrap",
 };
 
 const MainNavView = (props) => {

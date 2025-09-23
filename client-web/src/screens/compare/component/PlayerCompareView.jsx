@@ -16,7 +16,8 @@ const rootStyle = {
     display: "flex",
     flexDirection: "column",
     gap: "4px",
-    width: "497px",
+    width: "100%",
+    maxWidth: "497px",
 };
 
 const expandStyle = {

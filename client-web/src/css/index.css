@@ -120,6 +120,10 @@
   --overlay-item-width:80px;
   --overlay-list-row-gap:6px;
 
+  /* Mobile breakpoints */
+  --mobile-breakpoint: 768px;
+  --small-mobile-breakpoint: 480px;
+
 }
 
 #root {
@@ -138,7 +142,8 @@
   border: var(--border-list-item);
   border-radius: var(--radius-border);
   padding:4px;
-  width:700px;
+  width:100%;
+  max-width:700px;
 }
 
 .list_item_drawer {
@@ -867,5 +872,105 @@ label {
 
 .flip_icon {
   transform: rotate(180deg);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  :root {
+    --padding-page-container: 20px;
+    --nav-item-gap: 16px;
+    --page-max-width: 100%;
+  }
+
+  #root {
+    padding: 0 10px;
+  }
+
+  .list_item_header {
+    width: 100%;
+    max-width: none;
+    padding: 8px;
+  }
+
+  .compare_data_row {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .page_containter {
+    padding: 0;
+  }
+
+  /* Make charts responsive */
+  .chart-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Mobile navigation */
+  .mobile-nav-container {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .nav-row {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .nav {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --padding-page-container: 15px;
+    --nav-item-gap: 12px;
+    --gap-list-item: 8px;
+  }
+
+  #root {
+    padding: 0 5px;
+  }
+
+  .list_item_header {
+    padding: 6px;
+  }
+
+  .compare_data_row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  /* Stack navigation items on very small screens */
+  .nav {
+    font-size: 14px;
+  }
+
+  /* Smaller fonts for mobile */
+  .data_highlight {
+    font-size: 24px;
+  }
+
+  /* Additional mobile fixes for small screens */
+  .activity_score_box {
+    width: 50px;
+    height: 25px;
+    font-size: 16px;
+  }
+
+  /* Touch targets */
+  .nav, button, select {
+    min-height: 44px;
+    padding: 8px 12px;
+  }
+
+  /* Better mobile spacing */
+  .overlay_stat_value {
+    font-size: 20px;
+  }
 }
 

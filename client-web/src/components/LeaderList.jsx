@@ -27,7 +27,9 @@ import IndicatorView from "./IndicatorView";
 import PlayerNameView from "./PlayerNameView";
 
 const itemWrapperStyleBase = {
-    width: 200,
+    width: "100%",
+    maxWidth: 200,
+    minWidth: 150,
     display: "grid",
     columnGap: 4,
     rowGap: 2,

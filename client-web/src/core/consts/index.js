@@ -24,7 +24,7 @@
 import { Season } from "shared";
 
 export const FLOAT_DECIMAL_PRECISION = 2;
-export const DESTINY_API_KEY = process.env.REACT_APP_DESTINY_API_KEY;
+export const DESTINY_API_KEY = process.env.REACT_APP_DESTINY_API_KEY || "c3f410b0478246ba8cf50fe17a30de13";
 export const DATA_REFRESH_INTERVAL = 30 * 1000; //Every 30 seconds
 export const MANIFEST_CHECK_INTERVAL = 60 * 1000 * 60; //60 minutes
 

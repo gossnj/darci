@@ -533,13 +533,20 @@ export const useFetchPlayersMetrics = (players) => {
 
                         let metrics;
                         try {
+                            console.log(`Raw Bungie API response for ${players[i].getFullName()}:`, value);
                             metrics = PlayerMetrics.fromApi(value);
+                            console.log(`Successfully parsed metrics for ${players[i].getFullName()}:`, {
+                                crucible: metrics.crucible,
+                                trials: metrics.trials,
+                                ironBanner: metrics.ironBanner
+                            });
                         } catch (e) {
                             //this happens because sometimes some players will have no data
                             //not sure why
                             console.log(
-                                "Error parsing metrics data. Skipping."
+                                `Error parsing metrics data for ${players[i].getFullName()}:`, e.message, e.stack
                             );
+                            console.log(`Raw response that failed:`, value);
                             continue;
                         }
 

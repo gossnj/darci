@@ -70,92 +70,101 @@ class PlayerMetrics {
     }
 
     static fromApi(data) {
+        console.log('PlayerMetrics.fromApi called with data:', data);
+        
+        // Check if the expected structure exists
+        if (!data.metrics || !data.metrics.data || !data.metrics.data.metrics) {
+            throw new Error('Invalid metrics data structure: missing metrics.data.metrics');
+        }
+        
+        const metrics = data.metrics.data.metrics;
+        console.log('Available metrics:', Object.keys(metrics));
+        
+        // Log some sample metrics to help identify the correct IDs
+        console.log('Sample metrics data:', Object.entries(metrics).slice(0, 10).map(([id, data]) => ({
+            id,
+            displayName: data.displayProperties?.name || 'Unknown',
+            objectiveProgress: data.objectiveProgress?.progress || 0
+        })));
+        
+        // Search for metrics by keywords to help identify correct IDs
+        const searchMetrics = (keywords) => {
+            return Object.entries(metrics).filter(([id, data]) => {
+                const name = data.displayProperties?.name?.toLowerCase() || '';
+                return keywords.some(keyword => name.includes(keyword.toLowerCase()));
+            }).map(([id, data]) => ({
+                id,
+                name: data.displayProperties?.name,
+                progress: data.objectiveProgress?.progress || 0
+            }));
+        };
+        
+        console.log('Trials metrics:', searchMetrics(['trials', 'flawless', 'carries']));
+        console.log('Crucible metrics:', searchMetrics(['crucible', 'defeats', 'kills', 'kda']));
+        console.log('Iron Banner metrics:', searchMetrics(['iron banner', 'banner']));
+        
         const trials = {
             flawlessWeekly:
-                data.metrics.data.metrics[TRIALS_WEEKLY_FLAWLESS]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_WEEKLY_FLAWLESS]?.objectiveProgress?.progress || 0,
             flawlessSeason:
-                data.metrics.data.metrics[TRIALS_SEASON_FLAWLESS]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_SEASON_FLAWLESS]?.objectiveProgress?.progress || 0,
             flawlessLifetime:
-                data.metrics.data.metrics[TRIALS_LIFETIME_FLAWLESS]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_LIFETIME_FLAWLESS]?.objectiveProgress?.progress || 0,
 
             winStreakWeekly:
-                data.metrics.data.metrics[TRIALS_WEEKLY_WIN_STREAK]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_WEEKLY_WIN_STREAK]?.objectiveProgress?.progress || 0,
             winStreakSeason:
-                data.metrics.data.metrics[TRIALS_SEASON_WIN_STREAK]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_SEASON_WIN_STREAK]?.objectiveProgress?.progress || 0,
 
             defeatsWeekly:
-                data.metrics.data.metrics[TRIALS_WEEKLY_DEFEATS]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_WEEKLY_DEFEATS]?.objectiveProgress?.progress || 0,
             defeatsSeason:
-                data.metrics.data.metrics[TRIALS_SEASON_DEFEATS]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_SEASON_DEFEATS]?.objectiveProgress?.progress || 0,
             defeatsLifetime:
-                data.metrics.data.metrics[TRIALS_LIFETIME_DEFEATS]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_LIFETIME_DEFEATS]?.objectiveProgress?.progress || 0,
 
             winsWeekly:
-                data.metrics.data.metrics[TRIALS_WEEKLY_WINS].objectiveProgress
-                    .progress,
+                metrics[TRIALS_WEEKLY_WINS]?.objectiveProgress?.progress || 0,
             winsSeason:
-                data.metrics.data.metrics[TRIALS_SEASON_WINS].objectiveProgress
-                    .progress,
+                metrics[TRIALS_SEASON_WINS]?.objectiveProgress?.progress || 0,
             winsLifetime:
-                data.metrics.data.metrics[TRIALS_LIFETIME_WINS]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_LIFETIME_WINS]?.objectiveProgress?.progress || 0,
 
             carriesWeekly:
-                data.metrics.data.metrics[TRIALS_WEEKLY_CARRIES]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_WEEKLY_CARRIES]?.objectiveProgress?.progress || 0,
             carriesSeason:
-                data.metrics.data.metrics[TRIALS_SEASON_CARRIES]
-                    .objectiveProgress.progress,
+                metrics[TRIALS_SEASON_CARRIES]?.objectiveProgress?.progress || 0,
         };
 
         const ironBanner = {
             winsSeason:
-                data.metrics.data.metrics[IRON_BANNER_SEASON_WINS]
-                    .objectiveProgress.progress,
+                metrics[IRON_BANNER_SEASON_WINS]?.objectiveProgress?.progress || 0,
             goldMedalsSeason:
-                data.metrics.data.metrics[IRON_BANNER_SEASON_GOLD_MEDALS]
-                    .objectiveProgress.progress,
+                metrics[IRON_BANNER_SEASON_GOLD_MEDALS]?.objectiveProgress?.progress || 0,
             efficiencySeason:
-                data.metrics.data.metrics[IRON_BANNER_SEASON_EFFICIENCY]
-                    .objectiveProgress.progress / 100,
+                (metrics[IRON_BANNER_SEASON_EFFICIENCY]?.objectiveProgress?.progress || 0) / 100,
             defeatsSeason:
-                data.metrics.data.metrics[IRON_BANNER_SEASON_KILLS]
-                    .objectiveProgress.progress,
+                metrics[IRON_BANNER_SEASON_KILLS]?.objectiveProgress?.progress || 0,
         };
 
         const crucible = {
             defeatsWeekly:
-                data.metrics.data.metrics[CRUCIBLE_WEEKLY_DEFEATS]
-                    .objectiveProgress.progress,
+                metrics[CRUCIBLE_WEEKLY_DEFEATS]?.objectiveProgress?.progress || 0,
             defeatsSeason:
-                data.metrics.data.metrics[CRUCIBLE_SEASON_DEFEATS]
-                    .objectiveProgress.progress,
+                metrics[CRUCIBLE_SEASON_DEFEATS]?.objectiveProgress?.progress || 0,
             defeatsLifetime:
-                data.metrics.data.metrics[CRUCIBLE_LIFETIME_DEFEATS]
-                    .objectiveProgress.progress,
+                metrics[CRUCIBLE_LIFETIME_DEFEATS]?.objectiveProgress?.progress || 0,
 
             winStreakWeekly:
-                data.metrics.data.metrics[CRUCIBLE_WEEK_WIN_STREAK]
-                    .objectiveProgress.progress,
+                metrics[CRUCIBLE_WEEK_WIN_STREAK]?.objectiveProgress?.progress || 0,
             winStreakSeason:
-                data.metrics.data.metrics[CRUCIBLE_SEASON_WIN_STREAK]
-                    .objectiveProgress.progress,
+                metrics[CRUCIBLE_SEASON_WIN_STREAK]?.objectiveProgress?.progress || 0,
 
             kdaSeason:
-                data.metrics.data.metrics[CRUCIBLE_SEASON_KDA].objectiveProgress
-                    .progress / 100,
+                (metrics[CRUCIBLE_SEASON_KDA]?.objectiveProgress?.progress || 0) / 100,
 
             winRateSeason:
-                data.metrics.data.metrics[CRUCIBLE_SEASON_WIN_RATE]
-                    .objectiveProgress.progress,
+                metrics[CRUCIBLE_SEASON_WIN_RATE]?.objectiveProgress?.progress || 0,
         };
 
         return new PlayerMetrics({ trials, ironBanner, crucible });

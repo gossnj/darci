@@ -15,6 +15,10 @@ RUN apk add --no-cache unzip && \
 # Build stage for dependencies
 FROM node:16-alpine AS builder
 
+# Accept build argument for API key
+ARG REACT_APP_DESTINY_API_KEY
+ENV REACT_APP_DESTINY_API_KEY=$REACT_APP_DESTINY_API_KEY
+
 # Install build dependencies
 RUN apk add --no-cache python3 make g++
 

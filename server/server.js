@@ -280,6 +280,112 @@ app.get(
     }
 );
 
+app.get(
+    "/api/player/weapons/by-type/:member_id/:characterClass/:mode/:startMoment/:endMoment?/",
+    (req, res, next) => {
+        let startTime = new Date().getTime();
+
+        let startMoment = Moment.fromType(req.params.startMoment);
+        let memberId = req.params.member_id;
+        let characterClassSelection = CharacterClassSelection.fromType(
+            req.params.characterClass
+        );
+        let mode = Mode.fromType(req.params.mode);
+
+        let endMoment =
+            req.params.endMoment !== undefined
+                ? Moment.fromType(req.params.endMoment)
+                : Moment.NOW;
+
+        const startDate = startMoment.getDate();
+        const endDate = endMoment.getDate();
+
+        const weapons = activityStore.retrieveWeaponsSummary(
+            memberId,
+            characterClassSelection,
+            mode,
+            startDate,
+            endDate
+        );
+
+        // Get manifest data for each weapon to determine type
+        const manifest = manifestInterface.manifest;
+
+        // Group weapons by type
+        const weaponsByType = {};
+
+        for (const weapon of weapons) {
+            const weaponDef = manifest.weaponItemDefinition[weapon.id];
+
+            if (!weaponDef) {
+                continue;
+            }
+
+            const weaponType = weaponDef.itemSubType;
+
+            if (!weaponsByType[weaponType]) {
+                weaponsByType[weaponType] = {
+                    type: weaponType,
+                    typeName: getWeaponTypeName(weaponType),
+                    weapons: [],
+                    totalKills: 0,
+                    totalPrecisionKills: 0,
+                    totalGames: 0,
+                    ammunitionType: weaponDef.ammunitionType
+                };
+            }
+
+            weaponsByType[weaponType].weapons.push({
+                ...weapon,
+                item: weaponDef
+            });
+            weaponsByType[weaponType].totalKills += weapon.kills;
+            weaponsByType[weaponType].totalPrecisionKills += weapon.precision;
+            weaponsByType[weaponType].totalGames += weapon.count;
+        }
+
+        // Convert to array and calculate averages
+        const weaponTypeStats = Object.values(weaponsByType).map(typeData => ({
+            type: typeData.type,
+            typeName: typeData.typeName,
+            ammunitionType: typeData.ammunitionType,
+            totalKills: typeData.totalKills,
+            totalPrecisionKills: typeData.totalPrecisionKills,
+            totalGames: typeData.totalGames,
+            uniqueWeapons: typeData.weapons.length,
+            avgKillsPerGame: typeData.totalGames > 0 ? typeData.totalKills / typeData.totalGames : 0,
+            precisionPercent: typeData.totalKills > 0 ? typeData.totalPrecisionKills / typeData.totalKills : 0,
+            topWeapons: typeData.weapons
+                .sort((a, b) => b.kills - a.kills)
+                .slice(0, 3)
+        }));
+
+        // Sort by total kills
+        weaponTypeStats.sort((a, b) => b.totalKills - a.totalKills);
+
+        const player = activityStore.retrieveMember(memberId);
+
+        const query = {
+            startDate: startDate,
+            endDate: endDate,
+            startMoment: startMoment.toString(),
+            endMoment: endMoment.toString(),
+            mode: mode.toString(),
+            modeId: mode.id,
+            classSelection: characterClassSelection.toString(),
+            executionTime: new Date().getTime() - startTime,
+        };
+
+        const out = {
+            query: query,
+            player: player,
+            weaponTypes: weaponTypeStats,
+        };
+
+        sendJsonResponse(res, out);
+    }
+);
+
 app.get("/api/players/", (req, res, next) => {
     let startTime = new Date().getTime();
     let players = activityStore.retrieveSyncMembers();
@@ -393,6 +499,31 @@ app.use(express.static(path.join(__dirname, "../client-web/build/")));
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../client-web/build/index.html"));
 });
+
+const getWeaponTypeName = (itemSubType) => {
+    // ItemSubType enum from Destiny 2 API
+    const weaponTypeNames = {
+        6: "Auto Rifle",
+        7: "Shotgun",
+        8: "Machine Gun",
+        9: "Hand Cannon",
+        10: "Rocket Launcher",
+        11: "Fusion Rifle",
+        12: "Sniper Rifle",
+        13: "Pulse Rifle",
+        14: "Scout Rifle",
+        17: "Sidearm",
+        18: "Sword",
+        22: "Linear Fusion Rifle",
+        23: "Grenade Launcher",
+        24: "Submachine Gun",
+        25: "Trace Rifle",
+        26: "Bow",
+        33: "Glaive"
+    };
+
+    return weaponTypeNames[itemSubType] || `Unknown (${itemSubType})`;
+};
 
 const sendJsonResponse = (res, data) => {
     const out = {

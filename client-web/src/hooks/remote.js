@@ -392,6 +392,74 @@ export const useFetchPlayerSummary = (args) => {
     return [output.activityStats, output.isLoading, output.error];
 };
 
+export const useFetchWeaponTypes = (args) => {
+    let refreshInterval = args.refreshInterval;
+    let memberId = args.memberId;
+    let mode = args.mode;
+    let startMoment = args.startMoment;
+    let endMoment = args.endMoment;
+    let characterClass = args.characterClass;
+    let hash = args.hash;
+
+    const [output, setOutput] = useState({
+        weaponTypes: undefined,
+        isLoading: true,
+        error: undefined,
+    });
+
+    let [lastTimeoutId, setLastTimeoutId] = useState();
+    useEffect(() => {
+        cleanUpTimeout(lastTimeoutId);
+        let out = reducer(output, "isLoading", true);
+        if (
+            !memberId ||
+            !mode ||
+            !startMoment ||
+            !characterClass
+        ) {
+            return;
+        }
+
+        let timeoutId;
+        const f = async () => {
+            let s = reducer(output, "isLoading", false);
+            try {
+                const data = await fetchApi(
+                    `/api/player/weapons/by-type/${memberId}/${characterClass.type}/${mode.type}/${startMoment.type}/${endMoment.type}/`
+                );
+
+                s = reducer(s, "weaponTypes", data.weaponTypes);
+
+                //clear any previous errors
+                s = reducer(s, "error", undefined);
+            } catch (err) {
+                s = reducer(s, "error", err);
+            }
+
+            setOutput(s);
+
+            timeoutId = startTimeout(f, refreshInterval);
+            setLastTimeoutId(timeoutId);
+        };
+
+        setOutput(out);
+        f();
+
+        return () => {
+            cleanUpTimeout(timeoutId);
+        };
+    }, [
+        characterClass,
+        memberId,
+        mode,
+        startMoment,
+        refreshInterval,
+        hash,
+    ]);
+
+    return [output.weaponTypes, output.isLoading, output.error];
+};
+
 export const useFetchPlayers = (manifest) => {
     //return is [players, isLoading, error]
     const [output, setOutput] = useState({

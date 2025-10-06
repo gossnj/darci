@@ -33,6 +33,7 @@ import TeamPerformance from "./components/TeamPerformanceView";
 import {
     useFetchPlayerActivities,
     useFetchPlayerSummary,
+    useFetchWeaponTypes,
 } from "../../hooks/remote";
 
 import { CharacterClassSelection, Mode, Moment, OrderBy, Season } from "shared";
@@ -53,6 +54,7 @@ import PlayerMetaWeaponsDetailView from "./components/PlayerMetaWeaponsDetailVie
 import ErrorContainerView from "../../components/ErrorContainerView";
 import LobbyMetaView from "./components/LobbyMetaView";
 import PlayerProfileView from "./components/profile/PlayerProfileView";
+import PlayerWeaponTypeAnalysisView from "./components/PlayerWeaponTypeAnalysisView";
 
 const { useQuery } = require("../../hooks/browser");
 
@@ -102,6 +104,10 @@ const pageLinks = [
     {
         value: "Weapons",
         id: "weapons",
+    },
+    {
+        value: "Weapon Types",
+        id: "weaponTypes",
     },
     {
         value: "Weapon Meta",
@@ -177,6 +183,17 @@ const PlayerView = () => {
         hash,
         orderBy,
     });
+
+    let [weaponTypes, isWeaponTypesLoading, weaponTypesLoadError] =
+        useFetchWeaponTypes({
+            refreshInterval: PLAYER_VIEW_REFRESH_INTERVAL,
+            memberId: memberId,
+            mode,
+            startMoment,
+            endMoment,
+            characterClass,
+            hash,
+        });
 
     const [lastUpdate, setLastUpdate] = useState();
     useEffect(() => {
@@ -328,6 +345,23 @@ const PlayerView = () => {
                                     weapons={weapons}
                                     type={WEAPONS_DETAIL_GAME}
                                 />
+                            </div>
+
+                            <div>
+                                <PageSectionView
+                                    id="weaponTypes"
+                                    title="Weapon Types"
+                                    description="Performance breakdown by weapon archetype"
+                                />
+                                {isWeaponTypesLoading ? (
+                                    <LoadingAnimationView message="Loading weapon types..." />
+                                ) : weaponTypesLoadError ? (
+                                    <div>Error loading weapon types</div>
+                                ) : (
+                                    <PlayerWeaponTypeAnalysisView
+                                        weaponTypes={weaponTypes}
+                                    />
+                                )}
                             </div>
 
                             <div>

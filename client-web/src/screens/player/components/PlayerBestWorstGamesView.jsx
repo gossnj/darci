@@ -77,10 +77,16 @@ const PlayerBestWorstGamesView = (props) => {
                 </div>
                 <div className="highlight-stats">
                     <div className="stat-item">
-                        <span className="stat-label">K/D/A</span>
-                        <span className="stat-value">
-                            {formatInt(stats.kills)}/{formatInt(stats.deaths)}/{formatInt(stats.assists)}
-                        </span>
+                        <span className="stat-label">Kills</span>
+                        <span className="stat-value">{formatInt(stats.kills)}</span>
+                    </div>
+                    <div className="stat-item">
+                        <span className="stat-label">Deaths</span>
+                        <span className="stat-value">{formatInt(stats.deaths)}</span>
+                    </div>
+                    <div className="stat-item">
+                        <span className="stat-label">Assists</span>
+                        <span className="stat-value">{formatInt(stats.assists)}</span>
                     </div>
                     <div className="stat-item">
                         <span className="stat-label">K/D</span>

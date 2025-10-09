@@ -36,7 +36,7 @@ import Player from "../core/data/Player";
 import PlayerActivities from "../core/data/PlayerActivities";
 import PlayerMetrics from "../core/data/PlayerMetrics";
 import { ActivityNotFoundError, DestinyApiDisabledError } from "../core/errors";
-import { OrderBy } from "shared";
+import { OrderBy, Mode } from "shared";
 import { reducer } from "../core/utils/data";
 import { Buffer } from "buffer";
 

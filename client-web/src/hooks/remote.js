@@ -500,7 +500,33 @@ export const useFetchPlayerHighlights = (args) => {
                     `/api/player/highlights/${memberId}/${characterClass.type}/${mode.type}/${startMoment.type}/${endMoment.type}/`
                 );
 
-                s = reducer(s, "highlights", data.highlights);
+                // Transform highlights to add manifest data
+                const transformActivities = (activities) => {
+                    return activities.map(activity => {
+                        const transformedActivity = { ...activity };
+                        transformedActivity.activity = { ...activity.activity };
+
+                        // Add map information from manifest
+                        transformedActivity.activity.map = manifest.getActivityDefinition(
+                            activity.activity.referenceId
+                        );
+
+                        // Add mode information
+                        transformedActivity.activity.mode = Mode.fromId(activity.activity.mode);
+
+                        return transformedActivity;
+                    });
+                };
+
+                const transformedHighlights = {
+                    bestKills: transformActivities(data.highlights.bestKills),
+                    bestKD: transformActivities(data.highlights.bestKD),
+                    bestEfficiency: transformActivities(data.highlights.bestEfficiency),
+                    worstKD: transformActivities(data.highlights.worstKD),
+                    mostDeaths: transformActivities(data.highlights.mostDeaths)
+                };
+
+                s = reducer(s, "highlights", transformedHighlights);
 
                 //clear any previous errors
                 s = reducer(s, "error", undefined);

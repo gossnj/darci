@@ -281,6 +281,121 @@ app.get(
 );
 
 app.get(
+    "/api/player/highlights/:member_id/:characterClass/:mode/:startMoment/:endMoment?/",
+    (req, res, next) => {
+        let startTime = new Date().getTime();
+
+        let startMoment = Moment.fromType(req.params.startMoment);
+        let memberId = req.params.member_id;
+        let characterClassSelection = CharacterClassSelection.fromType(
+            req.params.characterClass
+        );
+        let mode = Mode.fromType(req.params.mode);
+
+        let endMoment =
+            req.params.endMoment !== undefined
+                ? Moment.fromType(req.params.endMoment)
+                : Moment.NOW;
+
+        const startDate = startMoment.getDate();
+        const endDate = endMoment.getDate();
+
+        // Fetch best games by different metrics
+        const bestKills = activityStore.retrieveActivities(
+            memberId,
+            characterClassSelection,
+            mode,
+            startDate,
+            endDate,
+            OrderBy.KILLS,
+            5
+        );
+
+        const bestEfficiency = activityStore.retrieveActivities(
+            memberId,
+            characterClassSelection,
+            mode,
+            startDate,
+            endDate,
+            OrderBy.OPPONENTS_DEFEATED,
+            5
+        );
+
+        const mostDeaths = activityStore.retrieveActivities(
+            memberId,
+            characterClassSelection,
+            mode,
+            startDate,
+            endDate,
+            OrderBy.DEATHS,
+            5
+        );
+
+        // Calculate K/D for each activity and find best/worst
+        const allActivities = activityStore.retrieveActivities(
+            memberId,
+            characterClassSelection,
+            mode,
+            startDate,
+            endDate,
+            OrderBy.PERIOD,
+            1000 // Get more to calculate properly
+        );
+
+        // Calculate K/D and efficiency for sorting
+        const activitiesWithMetrics = allActivities.map(activity => {
+            const kills = activity.stats.kills;
+            const deaths = activity.stats.deaths || 1; // Avoid division by zero
+            const assists = activity.stats.assists;
+
+            return {
+                ...activity,
+                calculatedKD: kills / deaths,
+                calculatedEfficiency: (kills + assists) / deaths
+            };
+        });
+
+        // Sort for best K/D
+        const bestKD = [...activitiesWithMetrics]
+            .sort((a, b) => b.calculatedKD - a.calculatedKD)
+            .slice(0, 5);
+
+        // Sort for worst K/D (but filter out games with 0 kills - likely joined late)
+        const worstKD = [...activitiesWithMetrics]
+            .filter(a => a.stats.kills > 0)
+            .sort((a, b) => a.calculatedKD - b.calculatedKD)
+            .slice(0, 5);
+
+        const player = activityStore.retrieveMember(memberId);
+
+        const query = {
+            startDate: startDate,
+            endDate: endDate,
+            startMoment: startMoment.toString(),
+            endMoment: endMoment.toString(),
+            mode: mode.toString(),
+            modeId: mode.id,
+            classSelection: characterClassSelection.toString(),
+            executionTime: new Date().getTime() - startTime,
+        };
+
+        const out = {
+            query: query,
+            player: player,
+            highlights: {
+                bestKills: bestKills,
+                bestKD: bestKD,
+                bestEfficiency: bestEfficiency,
+                worstKD: worstKD,
+                mostDeaths: mostDeaths
+            }
+        };
+
+        sendJsonResponse(res, out);
+    }
+);
+
+app.get(
     "/api/player/weapons/by-type/:member_id/:characterClass/:mode/:startMoment/:endMoment?/",
     (req, res, next) => {
         let startTime = new Date().getTime();

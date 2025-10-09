@@ -34,6 +34,7 @@ import {
     useFetchPlayerActivities,
     useFetchPlayerSummary,
     useFetchWeaponTypes,
+    useFetchPlayerHighlights,
 } from "../../hooks/remote";
 
 import { CharacterClassSelection, Mode, Moment, OrderBy, Season } from "shared";
@@ -55,6 +56,7 @@ import ErrorContainerView from "../../components/ErrorContainerView";
 import LobbyMetaView from "./components/LobbyMetaView";
 import PlayerProfileView from "./components/profile/PlayerProfileView";
 import PlayerWeaponTypeAnalysisView from "./components/PlayerWeaponTypeAnalysisView";
+import PlayerBestWorstGamesView from "./components/PlayerBestWorstGamesView";
 
 const { useQuery } = require("../../hooks/browser");
 
@@ -117,7 +119,10 @@ const pageLinks = [
         value: "medals",
         id: "medals",
     },
-
+    {
+        value: "Highlights",
+        id: "highlights",
+    },
     {
         value: "games",
         id: "games",
@@ -186,6 +191,17 @@ const PlayerView = () => {
 
     let [weaponTypes, isWeaponTypesLoading, weaponTypesLoadError] =
         useFetchWeaponTypes({
+            refreshInterval: PLAYER_VIEW_REFRESH_INTERVAL,
+            memberId: memberId,
+            mode,
+            startMoment,
+            endMoment,
+            characterClass,
+            hash,
+        });
+
+    let [highlights, isHighlightsLoading, highlightsLoadError] =
+        useFetchPlayerHighlights({
             refreshInterval: PLAYER_VIEW_REFRESH_INTERVAL,
             memberId: memberId,
             mode,
@@ -384,6 +400,21 @@ const PlayerView = () => {
                                     activityCount={summary.activityCount}
                                 />
                             </div>
+                        </div>
+
+                        <div>
+                            <PageSectionView
+                                id="highlights"
+                                title="Highlights"
+                                description="Your best and most challenging performances"
+                            />
+                            {isHighlightsLoading ? (
+                                <LoadingAnimationView message="Loading highlights..." />
+                            ) : highlightsLoadError ? (
+                                <div>Error loading highlights</div>
+                            ) : (
+                                <PlayerBestWorstGamesView highlights={highlights} />
+                            )}
                         </div>
 
                         <div>

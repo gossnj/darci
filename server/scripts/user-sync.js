@@ -143,12 +143,12 @@ class UserSyncManager {
 
     async addUser(bungieName) {
         try {
-            const command = `dclisync --data-dir ${DCLI_CONFIG.dataDir} --api-key ${DCLI_CONFIG.apiKey} --add ${bungieName}`;
-            
+            const command = `dclisync --data-dir ${DCLI_CONFIG.dataDir} --api-key ${DCLI_CONFIG.apiKey} --add "${bungieName}"`;
+
             console.log(`Adding user: ${bungieName}`);
             console.log('Command:', command.replace(DCLI_CONFIG.apiKey, '[REDACTED]'));
-            
-            const output = execSync(command, { 
+
+            const output = execSync(command, {
                 encoding: 'utf8',
                 timeout: 60000 // 60 second timeout for user addition
             });
